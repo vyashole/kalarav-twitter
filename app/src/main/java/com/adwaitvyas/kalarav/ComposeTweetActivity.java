@@ -28,6 +28,7 @@ public class ComposeTweetActivity extends AppCompatActivity {
     Button btnSend;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         preferences = getSharedPreferences(Constants.PREFS_FILE,MODE_PRIVATE);
         String userToken = preferences.getString(Constants.USER_TOKEN, null);
         String userSecret = preferences.getString(Constants.USER_SECRET, null);
@@ -38,8 +39,7 @@ public class ComposeTweetActivity extends AppCompatActivity {
                 .setOAuthAccessTokenSecret(userSecret)
                 .build();
         twitter = new TwitterFactory(configuration).getInstance();
-        super.onCreate(savedInstanceState);
-        tweetID = getIntent().getLongExtra("tweetID",0);
+         tweetID = getIntent().getLongExtra("tweetID",0);
         replyTo = getIntent().getStringExtra("reply");
         retweet = getIntent().getStringExtra("retweet");
         if(retweet != null){
@@ -134,10 +134,10 @@ public class ComposeTweetActivity extends AppCompatActivity {
             super.onPostExecute(status);
             progressDialog.dismiss();
             if (status != null){
-                Toast.makeText(ComposeTweetActivity.this,"Posted", Toast.LENGTH_LONG).show();
+                Toast.makeText(ComposeTweetActivity.this,"Retweeted", Toast.LENGTH_LONG).show();
             }
             else {
-                Toast.makeText(ComposeTweetActivity.this,"Post Failed", Toast.LENGTH_LONG).show();
+                Toast.makeText(ComposeTweetActivity.this,"Retweet Failed", Toast.LENGTH_LONG).show();
             }
             finish();
         }
