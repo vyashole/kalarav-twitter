@@ -1,5 +1,6 @@
 package com.adwaitvyas.kalarav;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -23,7 +24,6 @@ public class KalaravMainActivity extends AppCompatActivity {
     private static final String TAG = "KalaravMainActivity";
     private Twitter twitter;
     private RequestToken requestToken;
-    private AccessToken accessToken;
     private SharedPreferences kalaravPrefs;
 
     @Override
@@ -35,7 +35,7 @@ public class KalaravMainActivity extends AppCompatActivity {
         builder.setOAuthConsumerKey(Constants.TWITTER_KEY);
         builder.setOAuthConsumerSecret(Constants.TWITTER_SECRET);
         Configuration configuration = builder.build();
-        TwitterFactory factory = new TwitterFactory(configuration);
+        final TwitterFactory factory = new TwitterFactory(configuration);
         twitter = factory.getInstance();
 
         //check Auth token
@@ -44,41 +44,61 @@ public class KalaravMainActivity extends AppCompatActivity {
             //not logged in
             setContentView(R.layout.activity_kalarav_main);
             Button btnSignIn = (Button) findViewById(R.id.btnSignIn);
-            assert btnSignIn != null; //something is terribly wrong if this assert throws
-
-            btnSignIn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    switch (view.getId()){
-                        case R.id.btnSignIn:
-                            //sign in new user
-                            String url = requestToken.getAuthenticationURL();
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+            if (btnSignIn != null) {
+                btnSignIn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        switch (view.getId()){
+                            case R.id.btnSignIn:
+                                //sign in new user
+                                String url = requestToken.getAuthenticationURL();
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                        }
                     }
-                }
-            });
+                });
+            }
 
-            new Thread(new Runnable() {
+            new AsyncTask<Void, Void, Void>() {
+                ProgressDialog progressDialog;
                 @Override
-                public void run() {
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    progressDialog = new ProgressDialog(KalaravMainActivity.this);
+                    progressDialog.setCancelable(false);
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setMessage("Please wait");
+                    progressDialog.show();
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    progressDialog.dismiss();
+                }
+
+                @Override
+                protected Void doInBackground(Void... params) {
                     try {
-                        // TODO this should ideally be an AsyncTask with a splash screen
                         requestToken = twitter.getOAuthRequestToken(Constants.APP_URL);
                     } catch (TwitterException e) {
                         e.printStackTrace();
                     }
+                    return null;
                 }
-            }).start();
+
+            }.execute();
 
         } else {
             //already logged in
-            //TODO load twitter feed
-            Toast.makeText(this, "Logged in!", Toast.LENGTH_LONG).show();
+            startActivity(new Intent(getApplicationContext(),TwitterFeedActivity.class));
             finish();
         }
 
     }
 
+    /**
+     * Handles the login intent called by twitter using kalarav://
+     * @param intent The Intent
+     */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -88,6 +108,18 @@ public class KalaravMainActivity extends AppCompatActivity {
 
             String oauthVerifier = data.getQueryParameter("oauth_verifier");
             AsyncTask<String, Void, AccessToken> accessTokenTask = new AsyncTask<String, Void, AccessToken> () {
+
+                ProgressDialog progressDialog;
+                @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    progressDialog = new ProgressDialog(KalaravMainActivity.this);
+                    progressDialog.setCancelable(false);
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setMessage("Please wait");
+                    progressDialog.show();
+                }
+
 
                 @Override
                 protected AccessToken doInBackground(String... params) {
@@ -100,20 +132,24 @@ public class KalaravMainActivity extends AppCompatActivity {
                     return token;
                 }
 
+
+
                 @Override
                 protected void onPostExecute(AccessToken accessToken) {
+                    progressDialog.dismiss();
                     super.onPostExecute(accessToken);
-                    KalaravMainActivity.this.accessToken = accessToken;
-                    kalaravPrefs.edit().putString(Constants.USER_TOKEN,accessToken.getToken())
+                    kalaravPrefs.edit().putString(Constants.USER_TOKEN, accessToken.getToken())
                             .putString(Constants.USER_SECRET, accessToken.getTokenSecret()).apply();
                     Toast.makeText(KalaravMainActivity.this, "Logged in!", Toast.LENGTH_LONG).show();
+                    startActivity(new Intent(getApplicationContext(),TwitterFeedActivity.class));
                     finish();
                 }
             };
-
             accessTokenTask.execute(oauthVerifier);
 
 
         }
     }
+
+
 }

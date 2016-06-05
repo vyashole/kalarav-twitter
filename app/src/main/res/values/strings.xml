@@ -2,4 +2,8 @@
     <string name="app_name">Kalarav</string>
     <string name="kalarav_welcome">Kalarav - Yet another Twitter client</string>
     <string name="sign_in_with_twitter">Sign in with Twitter</string>
+    <string name="title_activity_twitter_feed">Kalarav</string>
+    <string name="user_photo">User Photo</string>
+    <string name="reply">Reply</string>
+    <string name="retweet">Retweet</string>
 </resources>
