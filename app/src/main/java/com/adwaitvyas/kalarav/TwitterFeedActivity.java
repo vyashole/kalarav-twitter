@@ -36,8 +36,7 @@ public class TwitterFeedActivity extends AppCompatActivity {
             btnTweet.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Snackbar.make(view, "Not yet implemented", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                    startActivity(new Intent(TwitterFeedActivity.this, ComposeTweetActivity.class));
                 }
             });
         }

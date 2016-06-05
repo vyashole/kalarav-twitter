@@ -6,4 +6,6 @@
     <string name="user_photo">User Photo</string>
     <string name="reply">Reply</string>
     <string name="retweet">Retweet</string>
+    <string name="what_happening">What\'s happening?</string>
+    <string name="send">Send</string>
 </resources>
