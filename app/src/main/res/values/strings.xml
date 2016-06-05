@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Kalarav</string>
+    <string name="kalarav_welcome">Kalarav - Yet another Twitter client</string>
+    <string name="sign_in_with_twitter">Sign in with Twitter</string>
 </resources>
