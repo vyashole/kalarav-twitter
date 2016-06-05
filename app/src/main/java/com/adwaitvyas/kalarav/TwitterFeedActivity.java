@@ -13,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -23,6 +24,7 @@ public class TwitterFeedActivity extends AppCompatActivity {
     SQLiteDatabase database;
     Cursor cursor;
     TwitterUpdateReceiver updateReceiver;
+    private static final String TAG = "TwitterFeedActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,17 +65,18 @@ public class TwitterFeedActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            int rowLimit = 100;
+            Log.d(TAG, "onReceive: Incoming Tweets ");
+            int rowLimit = 200; //keep only 200 tweets
             if(DatabaseUtils.queryNumEntries(database, "home")>rowLimit) {
                 String deleteQuery = "DELETE FROM home WHERE "+ BaseColumns._ID+" NOT IN " +
                         "(SELECT "+BaseColumns._ID+" FROM home ORDER BY "+"update_time DESC " +
                         "limit "+rowLimit+")";
                 database.execSQL(deleteQuery);
-                cursor = database.query("home", null, null, null, null, null, "update_time DESC");
-                startManagingCursor(cursor);
-                twitterFeedAdapter = new TwitterFeedAdapter(TwitterFeedActivity.this,cursor);
-                feedListView.setAdapter(twitterFeedAdapter);
             }
+            cursor = database.query("home", null, null, null, null, null, "update_time DESC");
+            startManagingCursor(cursor);
+            twitterFeedAdapter = new TwitterFeedAdapter(TwitterFeedActivity.this,cursor);
+            feedListView.setAdapter(twitterFeedAdapter);
         }
     }
 

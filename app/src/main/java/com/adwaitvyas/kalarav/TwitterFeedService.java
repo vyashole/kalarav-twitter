@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.util.Log;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class TwitterFeedService extends Service {
     private SharedPreferences preferences;
     private Handler handler;
     private Fetcher fetcher;
-    private static final long FETCH_INTERVAL = 2*60*1000;
+    private static final long FETCH_INTERVAL = 60*1000; //load every minute
     private static final String TAG = "TwitterFeedService";
 
     public TwitterFeedService() {
@@ -81,15 +82,13 @@ public class TwitterFeedService extends Service {
                 List<Status> timeline = twitter.getHomeTimeline();
                 for (Status status : timeline){
                     ContentValues values = KalaravDatabaseHelper.getValues(status);
-                    database.insertOrThrow("home", null, values);
+                    database.insert("home", null, values);
                     statusChanges = true;
                 }
                 if(statusChanges){
                     sendBroadcast(new Intent("KALARAV_UPDATE"));
+                    Log.d(TAG, "Feed Updated");
                 }
-            }
-            catch (SQLiteConstraintException ignored){
-
             }
             catch (Exception e){
                 e.printStackTrace();
