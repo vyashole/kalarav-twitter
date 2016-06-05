@@ -21,7 +21,9 @@ import twitter4j.conf.ConfigurationBuilder;
 public class ComposeTweetActivity extends AppCompatActivity {
     SharedPreferences preferences;
     Twitter twitter;
-
+    String replyTo;
+    long tweetID;
+    String retweet;
     EditText editText;
     Button btnSend;
     @Override
@@ -37,19 +39,34 @@ public class ComposeTweetActivity extends AppCompatActivity {
                 .build();
         twitter = new TwitterFactory(configuration).getInstance();
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_compose_tweet);
-        editText = (EditText) findViewById(R.id.editText);
-        btnSend  = (Button) findViewById(R.id.btnSend);
-        if (btnSend != null && editText != null) {
-            btnSend.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String textToTweet = editText.getText().toString().trim();
-                    StatusUpdate statusUpdate;
-                    statusUpdate = new StatusUpdate(textToTweet);
-                    new TweetTask().execute(statusUpdate);
-                }
-            });
+        tweetID = getIntent().getLongExtra("tweetID",0);
+        replyTo = getIntent().getStringExtra("reply");
+        retweet = getIntent().getStringExtra("retweet");
+        if(retweet != null){
+            new RetweetTask().execute(tweetID);
+        } else {
+            setContentView(R.layout.activity_compose_tweet);
+            editText = (EditText) findViewById(R.id.editText);
+            btnSend  = (Button) findViewById(R.id.btnSend);
+
+            if(replyTo != null){
+                editText.setText("@"+replyTo);
+            }
+            if (btnSend != null && editText != null) {
+                btnSend.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String textToTweet = editText.getText().toString().trim();
+                        StatusUpdate statusUpdate;
+                        statusUpdate = new StatusUpdate(textToTweet);
+                        if(replyTo !=null){
+                            statusUpdate.inReplyToStatusId(tweetID);
+                        }
+                        new TweetTask().execute(statusUpdate);
+                    }
+                });
+            }
+
         }
 
     }
@@ -70,6 +87,42 @@ public class ComposeTweetActivity extends AppCompatActivity {
         protected twitter4j.Status doInBackground(StatusUpdate... params) {
             try {
                 status = twitter.updateStatus(params[0]);
+            } catch (TwitterException e) {
+                e.printStackTrace();
+            }
+            return status;
+        }
+
+        @Override
+        protected void onPostExecute(twitter4j.Status status) {
+            super.onPostExecute(status);
+            progressDialog.dismiss();
+            if (status != null){
+                Toast.makeText(ComposeTweetActivity.this,"Posted", Toast.LENGTH_LONG).show();
+            }
+            else {
+                Toast.makeText(ComposeTweetActivity.this,"Post Failed", Toast.LENGTH_LONG).show();
+            }
+            finish();
+        }
+    }
+
+    class RetweetTask extends AsyncTask<Long, Void, Status> {
+        twitter4j.Status status = null;
+        ProgressDialog progressDialog;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(ComposeTweetActivity.this);
+            progressDialog.setCancelable(false);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage("Please wait");
+            progressDialog.show();
+        }
+        @Override
+        protected twitter4j.Status doInBackground(Long... params) {
+            try {
+                status = twitter.retweetStatus(params[0]);
             } catch (TwitterException e) {
                 e.printStackTrace();
             }
