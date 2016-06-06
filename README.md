@@ -7,13 +7,11 @@ Kalarav in Sanskrit means the chirping sound made by birds
 Add Twitter API key and secret to Constants.java and build in Android Studio  
 
 ## Project Status
-### Implemented So Far  
+### Implemented
+- Sign in 
 - View Twitter feed
 - Post tweet
 - Reply to tweets
 - Retweet  
-
-
-### In The Works
 - Like
 - View Conversation
