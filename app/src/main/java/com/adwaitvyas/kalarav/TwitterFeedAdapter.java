@@ -46,12 +46,15 @@ public class TwitterFeedAdapter extends SimpleCursorAdapter {
         long statusID = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
         String statusName = cursor.getString(cursor.getColumnIndex("user_screen"));
         TweetData tweetData = new TweetData(statusName, statusID);
+        row.setTag(tweetData);
         row.findViewById(R.id.btnRetweet).setTag(tweetData);
         row.findViewById(R.id.btnReply).setTag(tweetData);
         row.findViewById(R.id.btnRetweet).setOnClickListener(onClickListener);
         row.findViewById(R.id.btnReply).setOnClickListener(onClickListener);
         row.findViewById(R.id.btnLike).setTag(tweetData);
         row.findViewById(R.id.btnLike).setOnClickListener(onClickListener);
+        row.findViewById(R.id.btnView).setTag(tweetData);
+        row.findViewById(R.id.btnView).setOnClickListener(onClickListener);
 
 
     }
@@ -76,6 +79,12 @@ public class TwitterFeedAdapter extends SimpleCursorAdapter {
                             .putExtra("tweetID", tweetData.getId())
                             .putExtra("like", tweetData.getUsername()));
                     break;
+                case R.id.btnView:
+                    v.getContext().startActivity(new Intent(v.getContext(),ViewTweetActivity.class)
+                            .putExtra("tweetID", tweetData.getId())
+                            .putExtra("username", tweetData.getUsername()));
+                    break;
+
 
             }
         }

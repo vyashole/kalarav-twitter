@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 public class TwitterFeedActivity extends AppCompatActivity {
@@ -47,6 +48,16 @@ public class TwitterFeedActivity extends AppCompatActivity {
         startManagingCursor(cursor); //todo deprecated - find a better way to do this
         twitterFeedAdapter = new TwitterFeedAdapter(this,cursor);
         feedListView.setAdapter(twitterFeedAdapter);
+        /*feedListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(TwitterFeedActivity.this,ViewTweetActivity.class);
+                TweetData tweetData = (TweetData) view.getTag();
+                intent.putExtra("tweetID",tweetData.getId());
+                intent.putExtra("username", tweetData.getUsername());
+                startActivity(intent);
+            }
+        });*/
         updateReceiver = new TwitterUpdateReceiver();
         registerReceiver(updateReceiver,new IntentFilter("KALARAV_UPDATE"));
         getApplicationContext().startService(new Intent(getApplicationContext(), TwitterFeedService.class));
@@ -76,6 +87,7 @@ public class TwitterFeedActivity extends AppCompatActivity {
             startManagingCursor(cursor);
             twitterFeedAdapter = new TwitterFeedAdapter(TwitterFeedActivity.this,cursor);
             feedListView.setAdapter(twitterFeedAdapter);
+
         }
     }
 

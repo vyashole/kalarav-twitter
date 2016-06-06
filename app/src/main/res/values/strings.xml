@@ -9,4 +9,7 @@
     <string name="what_happening">What\'s happening?</string>
     <string name="send">Send</string>
     <string name="like">Like</string>
+    <string name="view">View</string>
+    <string name="no_replies">No replies</string>
+    <string name="replies">Replies</string>
 </resources>

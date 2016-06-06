@@ -38,13 +38,14 @@
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".ComposeTweetActivity"
+        <activity
+            android:name=".ComposeTweetActivity"
             android:parentActivityName=".TwitterFeedActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".TwitterFeedActivity" />
-
         </activity>
+        <activity android:name=".ViewTweetActivity"></activity>
     </application>
 
 </manifest>

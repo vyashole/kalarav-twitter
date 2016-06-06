@@ -3,8 +3,8 @@
     android:layout_width="match_parent" android:layout_height="match_parent" android:padding="5dp">
 
     <ImageView
-        android:layout_width="72dp"
-        android:layout_height="72dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:id="@+id/imgUserImage"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
@@ -43,7 +43,7 @@
         android:layout_alignEnd="@+id/txtUpdateTime" />
 
     <Button
-        style="?android:attr/buttonStyleSmall"
+        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/reply"
@@ -53,7 +53,7 @@
         android:layout_alignParentEnd="true"/>
 
     <Button
-        style="?android:attr/buttonStyleSmall"
+        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/retweet"
@@ -63,7 +63,7 @@
         android:layout_toStartOf="@+id/btnReply" />
 
     <Button
-        style="?android:attr/buttonStyleSmall"
+        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/like"
@@ -71,6 +71,16 @@
         android:layout_alignTop="@+id/btnRetweet"
         android:layout_toLeftOf="@+id/btnRetweet"
         android:layout_toStartOf="@+id/btnRetweet" />
+
+    <Button
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/view"
+        android:id="@+id/btnView"
+        android:layout_alignBottom="@+id/btnLike"
+        android:layout_toLeftOf="@+id/btnLike"
+        android:layout_toStartOf="@+id/btnLike" />
 
 
 </RelativeLayout>
