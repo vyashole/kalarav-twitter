@@ -50,6 +50,8 @@ public class TwitterFeedAdapter extends SimpleCursorAdapter {
         row.findViewById(R.id.btnReply).setTag(tweetData);
         row.findViewById(R.id.btnRetweet).setOnClickListener(onClickListener);
         row.findViewById(R.id.btnReply).setOnClickListener(onClickListener);
+        row.findViewById(R.id.btnLike).setTag(tweetData);
+        row.findViewById(R.id.btnLike).setOnClickListener(onClickListener);
 
 
     }
@@ -68,6 +70,11 @@ public class TwitterFeedAdapter extends SimpleCursorAdapter {
                     v.getContext().startActivity(new Intent(v.getContext(),ComposeTweetActivity.class)
                             .putExtra("tweetID", tweetData.getId())
                             .putExtra("retweet", tweetData.getUsername()));
+                    break;
+                case R.id.btnLike:
+                    v.getContext().startActivity(new Intent(v.getContext(),ComposeTweetActivity.class)
+                            .putExtra("tweetID", tweetData.getId())
+                            .putExtra("like", tweetData.getUsername()));
                     break;
 
             }

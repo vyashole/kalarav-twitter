@@ -24,6 +24,7 @@ public class ComposeTweetActivity extends AppCompatActivity {
     String replyTo;
     long tweetID;
     String retweet;
+    String like;
     EditText editText;
     Button btnSend;
     @Override
@@ -42,9 +43,14 @@ public class ComposeTweetActivity extends AppCompatActivity {
          tweetID = getIntent().getLongExtra("tweetID",0);
         replyTo = getIntent().getStringExtra("reply");
         retweet = getIntent().getStringExtra("retweet");
+        like = getIntent().getStringExtra("like");
         if(retweet != null){
             new RetweetTask().execute(tweetID);
-        } else {
+        }
+        else if(like != null){
+           new LikeTask().execute(tweetID);
+        }
+        else {
             setContentView(R.layout.activity_compose_tweet);
             editText = (EditText) findViewById(R.id.editText);
             btnSend  = (Button) findViewById(R.id.btnSend);
@@ -138,6 +144,42 @@ public class ComposeTweetActivity extends AppCompatActivity {
             }
             else {
                 Toast.makeText(ComposeTweetActivity.this,"Retweet Failed", Toast.LENGTH_LONG).show();
+            }
+            finish();
+        }
+    }
+
+    class LikeTask extends AsyncTask<Long, Void, Status> {
+        twitter4j.Status status = null;
+        ProgressDialog progressDialog;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(ComposeTweetActivity.this);
+            progressDialog.setCancelable(false);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage("Please wait");
+            progressDialog.show();
+        }
+        @Override
+        protected twitter4j.Status doInBackground(Long... params) {
+            try {
+                status = twitter.createFavorite(params[0]);
+            } catch (TwitterException e) {
+                e.printStackTrace();
+            }
+            return status;
+        }
+
+        @Override
+        protected void onPostExecute(twitter4j.Status status) {
+            super.onPostExecute(status);
+            progressDialog.dismiss();
+            if (status != null){
+                Toast.makeText(ComposeTweetActivity.this,"Liked", Toast.LENGTH_LONG).show();
+            }
+            else {
+                Toast.makeText(ComposeTweetActivity.this,"Like Failed", Toast.LENGTH_LONG).show();
             }
             finish();
         }
